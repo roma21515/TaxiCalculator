@@ -3,6 +3,11 @@ package ar.com.lrusso.taxicalculator;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import android.content.Context;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -64,42 +69,51 @@ public class ThreadAgregar extends AsyncTask<String, Void, Bitmap>
 		nuevoPago(aGuardar);
 		}
 
-	public String leerArchivo(String archivo)
-		{
-		String resultado = "";
-		DataInputStream in = null;
-		try
-			{
-			in = new DataInputStream(actividad.openFileInput(archivo));
-			for (;;)
-				{
-				resultado = resultado + in.readUTF();
+	public String leerArchivo(String archivo) {
+			FileInputStream fis = null;
+			DataInputStream dis = null;
+			StringBuilder resultado = new StringBuilder();
+			try {
+				fis = actividad.openFileInput(archivo);
+				dis = new DataInputStream(fis);
+				while (dis.available() > 0) {
+					resultado.append(dis.readUTF());
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					if (dis != null) dis.close();
+					if (fis != null) fis.close();
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
 			}
-			catch (Exception e)
-			{
-			}
-		try
-			{
-			in.close();
-			}
-			catch(Exception e)
-			{
-			}
-		return resultado;
+			return resultado.toString();
 		}
 
-	public void escribirArchivo(String archivo, String texto)
-		{
-		try
-			{
-			DataOutputStream out = new DataOutputStream(actividad.openFileOutput(archivo, Context.MODE_PRIVATE));
-			out.writeUTF(texto);
-			out.close();
+	public void escribirArchivo(String archivo, String texto) {
+			FileOutputStream fos = null;
+			DataOutputStream dos = null;
+			try {
+				fos = actividad.openFileOutput(archivo, Context.MODE_PRIVATE);
+				dos = new DataOutputStream(fos);
+				final int CHUNK_SIZE = 64000; // Размер фрагмента (например, 16 КБ)
+				int length = texto.length();
+				for (int i = 0; i < length; i += CHUNK_SIZE) {
+					int end = Math.min(length, i + CHUNK_SIZE);
+					dos.writeUTF(texto.substring(i, end));
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					if (dos != null) dos.close();
+					if (fos != null) fos.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
-	    	catch(Exception e)
-	    	{
-	    	}
 		}
 	
 	public void nuevoPago(String valor)
