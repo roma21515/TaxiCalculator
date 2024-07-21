@@ -98,7 +98,7 @@ public class ThreadAgregar extends AsyncTask<String, Void, Bitmap>
 			try {
 				fos = actividad.openFileOutput(archivo, Context.MODE_PRIVATE);
 				dos = new DataOutputStream(fos);
-				final int CHUNK_SIZE = 64000; // Размер фрагмента (например, 16 КБ)
+				final int CHUNK_SIZE = 1024; // Размер фрагмента (например, 16 КБ)
 				int length = texto.length();
 				for (int i = 0; i < length; i += CHUNK_SIZE) {
 					int end = Math.min(length, i + CHUNK_SIZE);
