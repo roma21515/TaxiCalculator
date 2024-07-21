@@ -88,6 +88,7 @@ public class ThreadEditar extends AsyncTask<String, Void, Bitmap>
 			}
 		nuevoPago(aGuardar);
 		}
+
 	public String leerArchivo(String archivo) {
 			FileInputStream fis = null;
 			DataInputStream dis = null;
